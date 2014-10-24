@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+ 	<head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	    <title>Ruby on Rails: Welcome aboard</title>
+		<link rel="stylesheet" href="https://s.joyqom.com/javascripts/common_ui.css" type="text/css" />
+	
+		<script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
+		<script src="https://s.joyqom.com/javascripts/utils.js"></script>
+		<script src="https://s.joyqom.com/javascripts/jquery-2.1.1.js"></script>
+		<script src="https://s.joyqom.com/javascripts/common_ui.js"></script>
+				
+	</head>
+	<body>
+		Please input the taobao item you want to copy here:<br/>
+		<label>url:</url><input style="width:200px;" id="copy_item_url" ></input>
+		<input type="submit" value="copy" onclick="like();"/>
+		<input type="submit" value="create shopify product" onclick="create();"/>
+		
+		<div id="waitingbg" style="display:none;z-index:1000;position:absolute;left:0;top:0;width:100%;height:100%;">
+			<center>			
+				<img src="/images/wait3.gif" style="width:50px;margin-top:230px;"/>
+			</center>
+		</div>
+	<script src="https://s.joyqom.com/javascripts/oauth.js"></script>
+	
+	<script>
+
+		function like(){
+			url = $("#copy_item_url").val();
+			$.ajax({
+				type: "post",
+				url: "/like/copy?t="+ new Date().getTime(),
+				dataType: 'json',
+
+				data: {
+				// 	appid:g_appid,
+				// 	fname:fname,
+					url: url
+				}, 
+				success: function(data, textStatus){
+					alert( "Data Saved: " + data +","+ textStatus);
+					showWaiting(false);
+				},
+				error: function(xhr, textStatus, errorThrow){
+					// alert("error"+errorThrow+","+textStatus+","+xhr.responseText);
+					// popup("error"+errorThrow+","+textStatus+","+xhr.responseText);
+
+					showWaiting(false);
+				}
+			}); // $ajax
+		}
+		function create(){
+			url = $("#copy_item_url").val();
+			$.ajax({
+				type: "post",
+				url: "/like/create_shopify_product?t="+ new Date().getTime(),
+				dataType: 'json',
+
+				data: {
+				// 	appid:g_appid,
+				// 	fname:fname,
+					url: url
+				}, 
+				success: function(data, textStatus){
+					alert( "Data Saved: " + data +","+ textStatus);
+					showWaiting(false);
+				},
+				error: function(xhr, textStatus, errorThrow){
+					alert("error"+errorThrow+","+textStatus+","+xhr.responseText);
+					// popup("error"+errorThrow+","+textStatus+","+xhr.responseText);
+
+					showWaiting(false);
+				}
+			}); // $ajax
+		}
+		shop_domain = getUrlQueryString("shop");
+		alert("shop is "+shop_domain);
+		check_session({
+			client_id: "8a1e8ca0d914075ed99c42f34b5beffe", // or say api_key
+			client_secret: "e18566da5282ecf67a3649e079db56a6",
+			redirect_uri: "https://shop.joyqom.com:4433/oauth/rt",
+			// no_redirect_uri: true,
+			scope: "write_orders,read_customers",
+			oauth_url: "https://test-taobaolike.myshopify.com/admin/oauth/authorize",
+			ajax: false,
+			// token_url: "https://test-taobaolike.myshopify.com/admin/oauth/access_token"
+			}, function(){
+			ShopifyApp.init({
+		      	apiKey: '8a1e8ca0d914075ed99c42f34b5beffe',
+		      	// shopOrigin: 'https://CURRENT_LOGGED_IN_SHOP.myshopify.com'
+				// shopOrigin: 'https://test-taobaolike.myshopify.com'
+				shopOrigin:'https://'+shop_domain,
+				debug: true
+		    });
+			setCookie("shop", shop_domain);
+			alert("Init ok");
+			// do initialzation e.g. initialze page
+		});
+		
+		// to stop the "loading" in shopify page
+		ShopifyApp.ready(function(){
+		    ShopifyApp.Bar.initialize({
+		      icon: 'https://localhost:3001/assets/header-icon.png',
+		      title: 'Taobao Like',
+		      buttons: { 
+		        primary: {
+		          label: 'Save', 
+		          message: 'save', 
+		          callback: function(){ 
+		            ShopifyApp.Bar.loadingOn();
+		            doSomeCustomAction();
+		          }
+		        }
+		      }
+		    });
+		  });
+	</script>
+  	</body>
+</html>
