@@ -5,24 +5,71 @@
 	    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	    <title>Ruby on Rails: Welcome aboard</title>
 		<link rel="stylesheet" href="https://s.joyqom.com/javascripts/common_ui.css" type="text/css" />
-	
+	    
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">  
+	    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">  
+	    <META HTTP-EQUIV="expires" CONTENT="0">
+			
 		<script src="https://cdn.shopify.com/s/assets/external/app.js"></script>
 		<script src="https://s.joyqom.com/javascripts/utils.js"></script>
 		<script src="https://s.joyqom.com/javascripts/jquery-2.1.1.js"></script>
 		<script src="https://s.joyqom.com/javascripts/common_ui.js"></script>
-				
+			
+		<style>
+			div.label{
+				float:left;
+				min-width:100px;
+			}
+			div.value{
+				float:left;
+				min-width:100px;
+			}
+		</style>
 	</head>
 	<body>
-		Please input the taobao item you want to copy here:<br/>
-		<label>url:</url><input style="width:200px;" id="copy_item_url" ></input>
-		<input type="submit" value="copy" onclick="like();"/>
-		<input type="submit" value="create shopify product" onclick="create();"/>
-		
+		<div id="main" style="display:none;">
+			Please input the taobao item you want to copy here:<br/>
+			<label>url:</url><input style="width:200px;" id="copy_item_url" ></input>
+			<input type="submit" value="copy" onclick="like();"/>
+			<input type="submit" value="create shopify product" onclick="create();"/>
+			<div id="product" style="display:none;">
+				<div class="line">
+						<div class="label" >标题</div>
+						<div class="value">
+							<input id="product_title"></input>
+						</div>
+						<div sytle="clear:both">
+						</div>
+				</div>
+				<div class="line">
+						<div class="label" >价格</div>
+						<div class="value">
+							<input id="price"></input>
+						</div>
+						<div sytle="clear:both">
+						</div>
+				</div>
+				<div class="line">
+						<div class="label" >描述</div>
+						<div class="value">
+							<textarea id="product_body"></textarea>
+						</div>
+						<div sytle="clear:both">
+						</div>
+				</div>
+			</div>
+
+		</div><!-- main -->
 		<div id="waitingbg" style="display:none;z-index:1000;position:absolute;left:0;top:0;width:100%;height:100%;">
 			<center>			
 				<img src="/images/wait3.gif" style="width:50px;margin-top:230px;"/>
 			</center>
 		</div>
+		<div id="popup" class="round_border_b" style="display:none;opacity:0.3;background-color:black;color:white;text-align:center;padding:28px;position:absolute;left:500px;top:180px;z-index:800;width:300px;height:168px;font-size:13pt;min-height:57px;max-height:300px;overflow:auto;word-wrap: break-word;word-break: normal;/*background-size:243px 93px;*/border:0px red solid;" onclick="close_popup();">
+			<div id="popup_c" style="margin:10px;top:50%; transform: translateY(-50%);position:relative;border:0px solid red;">	
+			</div>
+		</div>
+		
 	<script src="https://s.joyqom.com/javascripts/oauth.js"></script>
 	
 	<script>
@@ -41,6 +88,12 @@
 				}, 
 				success: function(data, textStatus){
 					alert( "Data Saved: " + data +","+ textStatus);
+					if (data.error)
+					popup(data.error);
+					// $("#product_title").val(data.title);
+					// 			$("#product_body").html(data.body);
+					// 			$("#product_price").val(data.price);
+					
 					showWaiting(false);
 				},
 				error: function(xhr, textStatus, errorThrow){
@@ -64,29 +117,32 @@
 					url: url
 				}, 
 				success: function(data, textStatus){
-					alert( "Data Saved: " + data +","+ textStatus);
+					// alert( "Data Saved: " + data +","+ textStatus);
+					alert(inspect(data));
 					showWaiting(false);
 				},
 				error: function(xhr, textStatus, errorThrow){
 					alert("error"+errorThrow+","+textStatus+","+xhr.responseText);
 					// popup("error"+errorThrow+","+textStatus+","+xhr.responseText);
-
+					$("div#product").css("display", "block");
 					showWaiting(false);
 				}
 			}); // $ajax
 		}
+		
 		shop_domain = getUrlQueryString("shop");
-		alert("shop is "+shop_domain);
+		alert("shop is "+shop_domain+", url="+location.href);
 		check_session({
 			client_id: "8a1e8ca0d914075ed99c42f34b5beffe", // or say api_key
 			client_secret: "e18566da5282ecf67a3649e079db56a6",
 			redirect_uri: "https://shop.joyqom.com:4433/oauth/rt",
 			// no_redirect_uri: true,
-			scope: "write_orders,read_customers",
+			scope: "write_orders,read_customers,write_products",
 			oauth_url: "https://test-taobaolike.myshopify.com/admin/oauth/authorize",
 			ajax: false,
 			// token_url: "https://test-taobaolike.myshopify.com/admin/oauth/access_token"
 			}, function(){
+				
 			ShopifyApp.init({
 		      	apiKey: '8a1e8ca0d914075ed99c42f34b5beffe',
 		      	// shopOrigin: 'https://CURRENT_LOGGED_IN_SHOP.myshopify.com'
@@ -95,7 +151,9 @@
 				debug: true
 		    });
 			setCookie("shop", shop_domain);
-			alert("Init ok");
+			$("#main").css("display", "block");
+			// alert("Init ok");
+			popup("init ok");
 			// do initialzation e.g. initialze page
 		});
 		

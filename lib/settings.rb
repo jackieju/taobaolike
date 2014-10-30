@@ -15,7 +15,13 @@ $SETTINGS=
         :oauth_client_secret=>"e18566da5282ecf67a3649e079db56a6",        
         :oauth_client_id=>"8a1e8ca0d914075ed99c42f34b5beffe",
         :host=>"shop.joyqom.com",
-        :port=>"4433"        
+        :port=>"4433",
+        
+        # for taobao
+        :imgdb_fs_home=>"/Users/i027910/www/s.joyqom.com/htdocs/imgdb",
+        :imgdb_url_prefix=>"http://s.joyqom.com",
+        :tb_item_db_home=>"/Users/i027910/www/s.joyqom.com/htdocs/tbitmes"
+               
     }
 
 
@@ -41,7 +47,12 @@ else
             :oauth_client_secret=>"vkNfMXd0zN-zQ3-l3vFnokRBoqqF",
             :oauth_client_id=>"4874805429075418-yFNLByquAI63nUMkOxdZUoehmI0c85Um",
             :host=>"shop.joyqom.com",
-            :port=>"4433"
+            :port=>"4433",
+            
+            # for taobao
+            :imgdb_fs_home=>"/Users/i027910/www/s.joyqom.com/htdocs/imgdb",
+            :imgdb_url_prefix=>"http://s.joyqom.com",
+            :tb_item_db_home=>"/Users/i027910/www/s.joyqom.com/htdocs/tbitmes"
         }
 end
 

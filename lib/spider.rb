@@ -1,15 +1,15 @@
 
 
-def download_img(uri, docid, url, index)
+def download_img(page_uri, docid, image_url, index)
    
-    if not (url=~/http\:\/\//i)
-        if url =~/~\//i
-             url = "#{uri.scheme}://#{uri.host}:#{uri.port}#{url}"
+    if not (image_url=~/http\:\/\//i)
+        if image_url =~/~\//i
+             image_url = "#{page_uri.scheme}://#{page_uri.host}:#{page_uri.port}#{url}"
         else
-             url = "#{uri.scheme}://#{uri.host}:#{uri.port}#{uri.path}/#{url}"
+             image_url = "#{page_uri.scheme}://#{page_uri.host}:#{page_uri.port}#{page_uri.path}/#{url}"
         end
     end
-    url =   URI.escape(url)
+    url =   URI.escape(image_url)
        target_uri = URI.parse(url)
        p "==>downloading #{target_uri.host},#{target_uri.path},#{target_uri.query}"
        Net::HTTP.start(target_uri.host) { |http|
@@ -19,13 +19,22 @@ def download_img(uri, docid, url, index)
         resp = http.get("#{target_uri.path}")
     end
     
-
-     resp['Content-Type']=~ /image\/(.*)$/i
-     p "===> downloaded img #{url} to #{index}.#{$1}, content-type=#{resp['Content-Type']}" 
-     open("public/imgdb/#{docid}/#{index}.#{$1}", "wb") { |file|
+    i = image_url.rindex(".")
+    image_fext = "#{image_url[i+1, image_url.size-i]}"
+  
+     # resp['Content-Type']=~ /image\/(.*)$/i
+     # p "===> downloaded img #{url} to #{index}.#{$1}, content-type=#{resp['Content-Type']}" 
+     
+       fname = "#{index}.#{image_fext}"
+      p "===> downloaded img #{url} to #{fname}, content-type=#{resp['Content-Type']}" 
+       
+      FileUtils.makedirs("#{$SETTINGS[:imgdb_fs_home]}/#{docid}")
+     # open("#{$SETTINGS[:imgdb_fs_home]}/#{docid}/#{index}.#{$1}", "wb") { |file|
+     open("#{$SETTINGS[:imgdb_fs_home]}/#{docid}/#{fname}", "wb") { |file|
          file.write(resp.body)
      }
-     return "#{index}.#{$1}"
+     # return "#{index}.#{$1}"
+     return fname
  }
 end
     def esc(str)

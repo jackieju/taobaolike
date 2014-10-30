@@ -73,6 +73,8 @@ def http_post(url, hash=nil, _port=nil, headers=nil)
  
     p "==>url=#{url}"
     
+    p "headers1:#{headers.inspect}"
+    
   uri = URI.parse(url)
   p "==>uri=#{uri.inspect}"
   bHttps = false
@@ -138,7 +140,10 @@ def http_post(url, hash=nil, _port=nil, headers=nil)
      p "post_data #{post_data}"
      p "url: #{uri.inspect}"
      p "headers:#{headers.inspect}"
-     resp, data = http.post2(uri.path, post_data, headers)
+     
+     resp, data = http.post(uri.path, post_data, headers)
+     
+     # resp, data = http.post2(uri.path, post_data, headers)
      p "resp=>#{resp.inspect}"
 # end way 2
 
@@ -170,7 +175,7 @@ def show_stack(stack = nil)
 	return ""
 end
 
-def save_to_file(data, filename)
+def save_to_file(filename, data)
     open(filename, "w+") {|f|
          f.write(data)
     }             

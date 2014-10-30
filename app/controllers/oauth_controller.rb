@@ -34,7 +34,7 @@ class OauthController < ApplicationController
            :domain => request.host
         }
 
-        redirect_to "/index.html?atoken=#{session[:atoken]}"
+        redirect_to "/index.html?atoken=#{session[:atoken]}&shop=#{params[:shop]}"
         # render :text=>"ok"
     end
     

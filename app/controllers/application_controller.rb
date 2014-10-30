@@ -29,7 +29,12 @@ class ApplicationController < ActionController::Base
   #=== END OF for ajax return ===#
   
   def access_token
-      session[:atoken]
+      if session[:atoken]
+        return session[:atoken]
+    else
+        session[:atoken] = cookies[:atoken]
+        return session[:atoken]
+    end
   end
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
